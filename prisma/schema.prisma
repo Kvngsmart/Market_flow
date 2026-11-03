@@ -7,11 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum MembershipRole { OWNER MANAGER CASHIER INVENTORY_OFFICER ACCOUNTANT PLATFORM_ADMIN }
-enum SaleStatus { COMPLETED REFUNDED VOIDED }
-enum PaymentStatus { PENDING SUCCEEDED FAILED REFUNDED }
-enum SubscriptionStatus { TRIALING ACTIVE PAST_DUE CANCELED EXPIRED }
-enum InventoryMovementType { RECEIPT SALE RETURN ADJUSTMENT TRANSFER_OUT TRANSFER_IN DAMAGE EXPIRY }
+enum MembershipRole {
+  OWNER
+  MANAGER
+  CASHIER
+  INVENTORY_OFFICER
+  ACCOUNTANT
+  PLATFORM_ADMIN
+}
+
+enum SaleStatus {
+  COMPLETED
+  REFUNDED
+  VOIDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+enum InventoryMovementType {
+  RECEIPT
+  SALE
+  RETURN
+  ADJUSTMENT
+  TRANSFER_OUT
+  TRANSFER_IN
+  DAMAGE
+  EXPIRY
+}
 
 model User {
   id            String       @id @default(cuid())
