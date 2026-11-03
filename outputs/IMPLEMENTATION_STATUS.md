@@ -18,6 +18,7 @@
 - Added `/sales` receipt history with search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore inventory and record return movements.
 - Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
 - Added `/analytics` and `/api/analytics/sales` with tenant-scoped revenue, order, gross-profit, refund, trend, payment-mix, and top-product calculations.
+- Added server-side payment-provider readiness and webhook verification for Paystack, Flutterwave, and Monnify, including amount/currency validation before status updates.
 - Connected the merchant dashboard labels and navigation to the authenticated tenant context without changing its existing visual layout.
 
 ## Verification
@@ -31,8 +32,10 @@
 - The cash-register preview was opened from a clean production server on `http://localhost:3005/register`.
 - The analytics preview was opened from a clean production server on `http://localhost:3006/analytics`.
 - The tenant-aware dashboard preview was opened from a clean production server on `http://localhost:3007/`.
+- The payment settings preview was opened from a clean production server on `http://localhost:3008/settings/payments`.
+- Missing-signature Paystack webhooks return `401`; unsupported providers return `404`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Product editing/import, branch transfers, analytics exports/alerts, payment-provider webhooks, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
+Product editing/import, branch transfers, hosted payment checkout, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.

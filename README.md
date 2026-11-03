@@ -19,6 +19,7 @@ Implemented in this first pass:
 - Sales and receipts at `/sales` with transaction search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore stock and write return movements.
 - Cash-register control at `/register` with open/close shifts, cash expectations, variance calculation, audit records, and manager override rules.
 - Tenant-scoped sales analytics at `/analytics` and `/api/analytics/sales` with revenue, transactions, average order value, gross profit, refunds, trend, payment mix, and top-product metrics.
+- Payment-provider boundary at `/settings/payments` with Paystack, Flutterwave, and Monnify readiness indicators plus signed webhook verification at `/api/payments/webhooks/[provider]`; credentials remain server-side.
 - `/api/health` service endpoint.
 - Seed data for Sunrise Mart and Starter/Business/Enterprise plan records.
 - Environment template for database, session, and payment-provider credentials.
@@ -45,6 +46,6 @@ Open this folder in VS Code. The included `.vscode/tasks.json` exposes install, 
 ## Prioritized next milestones
 
 1. Add product editing, bulk import, and multi-branch stock transfers.
-2. Add payment-provider adapters and webhook verification for Paystack, Flutterwave, and Monnify.
+2. Add hosted payment checkout creation and provider-specific payment reconciliation.
 3. Add analytics filters, report exports, and threshold alerts.
 4. Add subscriptions, platform administration, accounting journals, offline sync, and production test/observability infrastructure.
