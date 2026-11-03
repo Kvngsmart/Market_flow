@@ -17,6 +17,7 @@
 - Added receipt, manual-adjustment, damage, and expiry inventory movement handling with negative-stock protection.
 - Added `/sales` receipt history with search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore inventory and record return movements.
 - Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
+- Added `/analytics` and `/api/analytics/sales` with tenant-scoped revenue, order, gross-profit, refund, trend, payment-mix, and top-product calculations.
 
 ## Verification
 
@@ -27,8 +28,9 @@
 - The inventory preview was opened from a clean production server on `http://localhost:3003/inventory`.
 - The sales/receipts preview was opened from a clean production server on `http://localhost:3004/sales`.
 - The cash-register preview was opened from a clean production server on `http://localhost:3005/register`.
+- The analytics preview was opened from a clean production server on `http://localhost:3006/analytics`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Product editing/import, branch transfers, payment-provider webhooks, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones. The dashboard still visualizes foundation view-model data until analytics queries are wired.
+Product editing/import, branch transfers, analytics exports/alerts, payment-provider webhooks, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
