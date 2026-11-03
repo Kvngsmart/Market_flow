@@ -19,6 +19,7 @@
 - Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
 - Added `/analytics` and `/api/analytics/sales` with tenant-scoped revenue, order, gross-profit, refund, trend, payment-mix, and top-product calculations.
 - Added server-side payment-provider readiness and webhook verification for Paystack, Flutterwave, and Monnify, including amount/currency validation before status updates.
+- Added `/plans` pricing preview and plan selection in onboarding; registration now creates a selected-plan 14-day trial subscription.
 - Connected the merchant dashboard labels and navigation to the authenticated tenant context without changing its existing visual layout.
 
 ## Verification
@@ -34,8 +35,9 @@
 - The tenant-aware dashboard preview was opened from a clean production server on `http://localhost:3007/`.
 - The payment settings preview was opened from a clean production server on `http://localhost:3008/settings/payments`.
 - Missing-signature Paystack webhooks return `401`; unsupported providers return `404`.
+- The plan chooser and Business-selected onboarding preview were opened from a clean production server on `http://localhost:3009/plans` and `http://localhost:3009/onboarding?plan=Business`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Product editing/import, branch transfers, hosted payment checkout, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
+Product editing/import, branch transfers, hosted payment checkout, subscription management, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
