@@ -18,6 +18,7 @@
 - Added `/sales` receipt history with search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore inventory and record return movements.
 - Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
 - Added `/analytics` and `/api/analytics/sales` with tenant-scoped revenue, order, gross-profit, refund, trend, payment-mix, and top-product calculations.
+- Connected the merchant dashboard labels and navigation to the authenticated tenant context without changing its existing visual layout.
 
 ## Verification
 
@@ -29,6 +30,7 @@
 - The sales/receipts preview was opened from a clean production server on `http://localhost:3004/sales`.
 - The cash-register preview was opened from a clean production server on `http://localhost:3005/register`.
 - The analytics preview was opened from a clean production server on `http://localhost:3006/analytics`.
+- The tenant-aware dashboard preview was opened from a clean production server on `http://localhost:3007/`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live

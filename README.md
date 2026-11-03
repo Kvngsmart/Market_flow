@@ -12,6 +12,7 @@ Implemented in this first pass:
 - Persistent light/dark theme toggle available from both merchant and platform-admin views; light mode preserves the original design.
 - Tenant-aware PostgreSQL/Prisma schema covering businesses, memberships, branches, products, multi-barcodes, inventory balances/movements, sales, payments, subscriptions, and audit logs.
 - Secure onboarding/login sessions with tenant-aware membership lookups and password hashing.
+- The existing merchant dashboard reads authenticated user, business, branch, and role context while preserving its original preview fallback and layout.
 - Tenant-scoped product search, barcode lookup, and product creation endpoints.
 - Inventory management at `/inventory` with catalogue search, barcode counts, low-stock indicators, product creation, stock receiving, manual adjustments, damage/expiry movements, and audit records.
 - Cashier checkout at `/pos` with product search, category browsing, cart quantities, cash totals, receipt confirmation, idempotency keys, atomic stock decrements, inventory movements, and audit records.
