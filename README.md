@@ -8,6 +8,8 @@ Implemented in this first pass:
 
 - Next.js App Router + TypeScript application shell.
 - Merchant dashboard with responsive navigation, KPI cards, sales trend visualization, quick actions, product table search, and activity feed.
+- Platform admin preview at `/admin` with subscription, MRR, business, and registration-growth views.
+- Persistent light/dark theme toggle available from both merchant and platform-admin views; light mode preserves the original design.
 - Tenant-aware PostgreSQL/Prisma schema covering businesses, memberships, branches, products, multi-barcodes, inventory balances/movements, sales, payments, subscriptions, and audit logs.
 - `/api/health` service endpoint.
 - Seed data for Sunrise Mart and Starter/Business/Enterprise plan records.
