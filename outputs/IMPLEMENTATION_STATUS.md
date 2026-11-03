@@ -1,4 +1,4 @@
-# MarketFlow POS — Milestone 1 status
+# MarketFlow POS — Milestone 2 status
 
 ## Completed
 
@@ -9,13 +9,19 @@
 - Added PostgreSQL and Redis Docker Compose services.
 - Added VS Code tasks and launch configuration.
 - Added `/api/health` for service-level verification.
+- Added secure onboarding/login sessions and tenant authorization helpers.
+- Added tenant-scoped product and barcode endpoints.
+- Added a cashier POS preview at `/pos` with search, category filters, cart management, cash totals, and receipt confirmation.
+- Added transactional cash checkout at `/api/sales` with idempotency protection, atomic inventory decrements, sale payments, inventory movements, and audit logging.
 
 ## Verification
 
-- Source files and project structure were created successfully.
-- Dependency installation could not complete in this managed environment because npm package download stalled after the default cache reported root-owned cache files. Run `npm install` in VS Code or a normal terminal, then use `npm run typecheck` and `npm run build`.
-- Database migration and seed execution require Docker/PostgreSQL and installed Prisma dependencies.
+- `npm run typecheck` passes.
+- `npm run build` passes and includes `/pos` and `/api/sales`.
+- Unauthenticated requests to `/api/sales` return `401 Authentication required`.
+- The POS preview was opened from a clean production server on `http://localhost:3002/pos`.
+- Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Authentication, tenant-session enforcement, product CRUD, transactional checkout, payment-provider webhooks, accounting journals, offline sync, and super-admin controls are intentionally staged for the next milestones. The dashboard visualizes foundation view-model data and does not claim live payment or accounting results.
+Inventory receiving/adjustments UI, receipt history/refunds, payment-provider webhooks, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones. The dashboard still visualizes foundation view-model data until analytics queries are wired.
