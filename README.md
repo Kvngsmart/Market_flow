@@ -21,6 +21,7 @@ Implemented in this first pass:
 - Cash-register control at `/register` with open/close shifts, cash expectations, variance calculation, audit records, and manager override rules.
 - Tenant-scoped sales analytics at `/analytics` and `/api/analytics/sales` with revenue, transactions, average order value, gross profit, refunds, trend, payment mix, and top-product metrics.
 - Payment-provider boundary at `/settings/payments` with Paystack, Flutterwave, and Monnify readiness indicators plus signed webhook verification at `/api/payments/webhooks/[provider]`; credentials remain server-side.
+- Hosted electronic checkout at `/api/payments/checkout` initializes Paystack, Flutterwave, or Monnify from the server; verified webhooks settle the checkout into a sale and decrement stock exactly once.
 - Subscription plan chooser at `/plans` with Starter, Business, and Enterprise pricing, annual/monthly display, and onboarding links; registration creates a 14-day trial subscription for the selected plan.
 - `/api/health` service endpoint.
 - Seed data for Sunrise Mart and Starter/Business/Enterprise plan records.
@@ -42,11 +43,11 @@ Open this folder in VS Code. The included `.vscode/tasks.json` exposes install, 
 - Money is represented as integer minor units in the schema; no floating-point accounting is used.
 - Sales have idempotency keys for duplicate-submit protection.
 - Product barcodes are unique per business, not globally, so tenants remain isolated.
-- Payment provider secrets belong only in server-side environment configuration. The UI does not claim electronic payment success; non-cash methods remain disabled until provider verification is integrated.
+- Payment provider secrets belong only in server-side environment configuration. The UI never claims electronic payment success; hosted checkouts remain pending until provider verification settles them.
 - Cash checkout computes prices from server-side product records and uses an idempotency key to protect against duplicate submissions.
 
 ## Prioritized next milestones
 
-1. Add hosted payment checkout creation, subscription billing, and provider-specific payment reconciliation.
+1. Add subscription billing and provider-specific subscription reconciliation.
 2. Add analytics filters, report exports, and threshold alerts.
 3. Add subscriptions management, platform administration, accounting journals, offline sync, and production test/observability infrastructure.

@@ -25,6 +25,7 @@ export default function PointOfSalePage() {
   const [category, setCategory] = useState("All products");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentProvider, setPaymentProvider] = useState("paystack");
   const [amountTendered, setAmountTendered] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -76,6 +77,14 @@ export default function PointOfSalePage() {
     if (amountTendered && Number(amountTendered) * 100 < subtotal) return setError("Amount tendered is less than the total.");
     setBusy(true);
     try {
+      if (paymentMethod !== "cash") {
+        const response = await fetch("/api/payments/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ provider: paymentProvider, items: cart.map((line) => ({ productId: line.id, quantity: line.quantity })) }) });
+        const data = await response.json() as { error?: string; checkout?: { checkoutUrl?: string } };
+        if (!response.ok) throw new Error(data.error ?? "Unable to initialize payment");
+        if (!data.checkout?.checkoutUrl) throw new Error("Payment provider did not return a checkout link");
+        window.location.assign(data.checkout.checkoutUrl);
+        return;
+      }
       const response = await fetch("/api/sales", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() }, body: JSON.stringify({ items: cart.map((line) => ({ productId: line.id, quantity: line.quantity })), paymentMethod, amountTenderedMinor: amountTendered ? Number(amountTendered) * 100 : undefined }) });
       const data = await response.json() as { error?: string; sale?: { reference: string } };
       if (!response.ok) throw new Error(data.error ?? "Unable to complete sale");
@@ -110,9 +119,9 @@ export default function PointOfSalePage() {
           <div className="pos-cart-heading"><div><p className="eyebrow">CURRENT ORDER</p><h2>Cart <span>{cart.reduce((sum, line) => sum + line.quantity, 0)}</span></h2></div><button className="text-button" onClick={() => setCart([])} disabled={!cart.length}>Clear</button></div>
           <div className="pos-cart-lines">{cart.map((line) => <div className="pos-cart-line" key={line.id}><div><strong>{line.name}</strong><small>{money(line.priceMinor)} each</small></div><div className="pos-quantity"><button onClick={() => updateQuantity(line.id, -1)} aria-label={`Decrease ${line.name}`}>−</button><span>{line.quantity}</span><button onClick={() => updateQuantity(line.id, 1)} aria-label={`Increase ${line.name}`}>+</button></div><b>{money(line.priceMinor * line.quantity)}</b></div>)}{!cart.length && <div className="pos-cart-empty"><span className="pos-cart-icon">◌</span><strong>Your cart is empty</strong><small>Select products to begin a sale.</small></div>}</div>
           <div className="pos-summary"><div><span>Subtotal</span><b>{money(subtotal)}</b></div><div><span>Tax</span><b>₦0</b></div><div className="pos-total"><span>Total</span><b>{money(subtotal)}</b></div></div>
-          <div className="pos-payment"><p className="eyebrow">PAYMENT METHOD</p><div className="pos-payment-options">{[["cash", "Cash", "▣"], ["card", "Card", "▰"], ["bank_transfer", "Transfer", "↗"]].map(([value, label, icon]) => <button key={value} className={paymentMethod === value ? "selected" : ""} onClick={() => setPaymentMethod(value)} disabled={value !== "cash"}><span>{icon}</span>{label}{value !== "cash" && <small>Soon</small>}</button>)}</div>{paymentMethod === "cash" && <label className="pos-tendered">Amount tendered<input inputMode="decimal" value={amountTendered} onChange={(event) => setAmountTendered(event.target.value.replace(/[^0-9.]/g, ""))} placeholder={subtotal ? String(Math.ceil(subtotal / 100)) : "0"}/><span>Change {money(change)}</span></label>}</div>
+          <div className="pos-payment"><p className="eyebrow">PAYMENT METHOD</p><div className="pos-payment-options">{[["cash", "Cash", "▣"], ["card", "Card", "▰"], ["bank_transfer", "Transfer", "↗"]].map(([value, label, icon]) => <button key={value} className={paymentMethod === value ? "selected" : ""} onClick={() => setPaymentMethod(value)}><span>{icon}</span>{label}</button>)}</div>{paymentMethod === "cash" ? <label className="pos-tendered">Amount tendered<input inputMode="decimal" value={amountTendered} onChange={(event) => setAmountTendered(event.target.value.replace(/[^0-9.]/g, ""))} placeholder={subtotal ? String(Math.ceil(subtotal / 100)) : "0"}/><span>Change {money(change)}</span></label> : <label className="pos-tendered">Hosted provider<select value={paymentProvider} onChange={(event) => setPaymentProvider(event.target.value)}><option value="paystack">Paystack</option><option value="flutterwave">Flutterwave</option><option value="monnify">Monnify</option></select><span>Payment settles after a verified webhook.</span></label>}</div>
           {error && <p className="pos-message error">{error}</p>}{message && <p className="pos-message success">{message}</p>}
-          <button className="primary-button pos-pay" onClick={completeSale} disabled={busy || !cart.length}>{busy ? "Processing…" : `Complete cash sale · ${money(subtotal)}`}</button>
+          <button className="primary-button pos-pay" onClick={completeSale} disabled={busy || !cart.length}>{busy ? "Processing…" : paymentMethod === "cash" ? `Complete cash sale · ${money(subtotal)}` : `Continue to payment · ${money(subtotal)}`}</button>
         </aside>
       </div>
       {showReceipt && <div className="pos-receipt-overlay" role="dialog" aria-modal="true"><div className="pos-receipt"><span className="pos-receipt-check">✓</span><p className="eyebrow">PAYMENT CONFIRMED</p><h2>Sale completed</h2><p>Your inventory has been updated and the receipt is ready.</p><strong>{lastReference}</strong><div><button className="secondary-button" onClick={() => window.print()}>Print receipt</button><button className="primary-button" onClick={() => setShowReceipt(false)}>Done</button></div></div></div>}

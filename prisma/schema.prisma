@@ -59,39 +59,41 @@ enum RegisterShiftStatus {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  email          String          @unique
-  name           String
-  passwordHash   String
-  mfaEnabled     Boolean         @default(false)
-  createdAt      DateTime        @default(now())
-  memberships    Membership[]
-  auditLogs      AuditLog[]
-  sales          Sale[]
-  registerShifts RegisterShift[]
+  id               String            @id @default(cuid())
+  email            String            @unique
+  name             String
+  passwordHash     String
+  mfaEnabled       Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  memberships      Membership[]
+  auditLogs        AuditLog[]
+  sales            Sale[]
+  registerShifts   RegisterShift[]
+  paymentCheckouts PaymentCheckout[]
 }
 
 model Business {
-  id             String              @id @default(cuid())
-  name           String
-  slug           String              @unique
-  category       String?
-  currency       String              @default("NGN")
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  memberships    Membership[]
-  branches       Branch[]
-  products       Product[]
-  barcodes       ProductBarcode[]
-  categories     Category[]
-  customers      Customer[]
-  suppliers      Supplier[]
-  sales          Sale[]
-  subscriptions  Subscription[]
-  auditLogs      AuditLog[]
-  cashRegisters  CashRegister[]
-  registerShifts RegisterShift[]
-  transfers      InventoryTransfer[]
+  id               String              @id @default(cuid())
+  name             String
+  slug             String              @unique
+  category         String?
+  currency         String              @default("NGN")
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  memberships      Membership[]
+  branches         Branch[]
+  products         Product[]
+  barcodes         ProductBarcode[]
+  categories       Category[]
+  customers        Customer[]
+  suppliers        Supplier[]
+  sales            Sale[]
+  subscriptions    Subscription[]
+  auditLogs        AuditLog[]
+  cashRegisters    CashRegister[]
+  registerShifts   RegisterShift[]
+  transfers        InventoryTransfer[]
+  paymentCheckouts PaymentCheckout[]
 }
 
 model Membership {
@@ -119,6 +121,7 @@ model Branch {
   movements         InventoryMovement[]
   cashRegisters     CashRegister[]
   registerShifts    RegisterShift[]
+  paymentCheckouts  PaymentCheckout[]
   outgoingTransfers InventoryTransfer[] @relation("TransferFromBranch")
   incomingTransfers InventoryTransfer[] @relation("TransferToBranch")
 
@@ -287,25 +290,26 @@ model Supplier {
 }
 
 model Sale {
-  id             String     @id @default(cuid())
+  id             String           @id @default(cuid())
   businessId     String
   branchId       String
   cashierId      String
   customerId     String?
   reference      String
-  status         SaleStatus @default(COMPLETED)
+  status         SaleStatus       @default(COMPLETED)
   subtotalMinor  Int
-  discountMinor  Int        @default(0)
-  taxMinor       Int        @default(0)
+  discountMinor  Int              @default(0)
+  taxMinor       Int              @default(0)
   totalMinor     Int
-  idempotencyKey String     @unique
-  createdAt      DateTime   @default(now())
-  business       Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  branch         Branch     @relation(fields: [branchId], references: [id])
-  cashier        User       @relation(fields: [cashierId], references: [id])
-  customer       Customer?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  idempotencyKey String           @unique
+  createdAt      DateTime         @default(now())
+  business       Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  branch         Branch           @relation(fields: [branchId], references: [id])
+  cashier        User             @relation(fields: [cashierId], references: [id])
+  customer       Customer?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
   items          SaleItem[]
   payments       Payment[]
+  checkout       PaymentCheckout?
 
   @@index([businessId, createdAt])
   @@index([branchId, createdAt])
@@ -335,6 +339,31 @@ model Payment {
   sale        Sale          @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   @@index([status, createdAt])
+}
+
+model PaymentCheckout {
+  id          String        @id @default(cuid())
+  businessId  String
+  branchId    String
+  cashierId   String
+  saleId      String?       @unique
+  provider    String
+  reference   String        @unique
+  status      PaymentStatus @default(PENDING)
+  amountMinor Int
+  currency    String
+  items       Json
+  checkoutUrl String?
+  metadata    Json?
+  createdAt   DateTime      @default(now())
+  expiresAt   DateTime
+  business    Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  branch      Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  cashier     User          @relation(fields: [cashierId], references: [id], onDelete: Cascade)
+  sale        Sale?         @relation(fields: [saleId], references: [id], onDelete: SetNull)
+
+  @@index([businessId, createdAt])
+  @@index([status, expiresAt])
 }
 
 model SubscriptionPlan {

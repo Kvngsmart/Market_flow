@@ -21,6 +21,7 @@
 - Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
 - Added `/analytics` and `/api/analytics/sales` with tenant-scoped revenue, order, gross-profit, refund, trend, payment-mix, and top-product calculations.
 - Added server-side payment-provider readiness and webhook verification for Paystack, Flutterwave, and Monnify, including amount/currency validation before status updates.
+- Added hosted checkout initialization at `/api/payments/checkout` for configured Paystack, Flutterwave, and Monnify accounts; pending checkout records are settled into completed sales only after a verified webhook, with atomic stock decrement and idempotent retry handling.
 - Added `/plans` pricing preview and plan selection in onboarding; registration now creates a selected-plan 14-day trial subscription.
 - Connected the merchant dashboard labels and navigation to the authenticated tenant context without changing its existing visual layout.
 
@@ -42,8 +43,10 @@
 - Unauthenticated product imports return `401 Authentication required`.
 - The branches and transfer preview was opened from a clean production server on `http://localhost:3012/branches`; both dark and light renders, including the transfer drawer, were visually checked.
 - Unauthenticated branch creation and stock transfer requests return `401 Authentication required`.
+- The POS hosted-payment preview was opened from a clean production server on `http://localhost:3013/pos`; Card/Transfer selection and the provider chooser were visually checked, and the preview catalog correctly blocks live payment.
+- Unauthenticated hosted checkout and missing-signature webhook requests return `401 Authentication required`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Hosted payment checkout, subscription management, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
+Subscription billing/reconciliation, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
