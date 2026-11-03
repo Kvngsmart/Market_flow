@@ -1,0 +1,254 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MembershipRole { OWNER MANAGER CASHIER INVENTORY_OFFICER ACCOUNTANT PLATFORM_ADMIN }
+enum SaleStatus { COMPLETED REFUNDED VOIDED }
+enum PaymentStatus { PENDING SUCCEEDED FAILED REFUNDED }
+enum SubscriptionStatus { TRIALING ACTIVE PAST_DUE CANCELED EXPIRED }
+enum InventoryMovementType { RECEIPT SALE RETURN ADJUSTMENT TRANSFER_OUT TRANSFER_IN DAMAGE EXPIRY }
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  name          String
+  passwordHash  String
+  mfaEnabled    Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  memberships   Membership[]
+  auditLogs     AuditLog[]
+  sales         Sale[]
+}
+
+model Business {
+  id            String          @id @default(cuid())
+  name          String
+  slug          String          @unique
+  category      String?
+  currency      String          @default("NGN")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  memberships   Membership[]
+  branches      Branch[]
+  products      Product[]
+  barcodes      ProductBarcode[]
+  categories    Category[]
+  customers     Customer[]
+  suppliers     Supplier[]
+  sales         Sale[]
+  subscriptions Subscription[]
+  auditLogs     AuditLog[]
+}
+
+model Membership {
+  id         String         @id @default(cuid())
+  businessId String
+  userId     String
+  role       MembershipRole
+  createdAt  DateTime       @default(now())
+  business   Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([businessId, userId])
+  @@index([userId])
+}
+
+model Branch {
+  id        String             @id @default(cuid())
+  businessId String
+  name      String
+  address   String?
+  active    Boolean            @default(true)
+  business  Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  balances  InventoryBalance[]
+  sales     Sale[]
+  movements InventoryMovement[]
+  @@index([businessId])
+}
+
+model Category {
+  id         String    @id @default(cuid())
+  businessId String
+  name       String
+  business   Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  products   Product[]
+  @@unique([businessId, name])
+}
+
+model Product {
+  id              String             @id @default(cuid())
+  businessId      String
+  categoryId      String?
+  name            String
+  description     String?
+  sku             String
+  costMinor      Int
+  priceMinor     Int
+  currency        String             @default("NGN")
+  reorderLevel    Int                @default(0)
+  active          Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  business        Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  category       Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  barcodes       ProductBarcode[]
+  balances       InventoryBalance[]
+  saleItems      SaleItem[]
+  movements      InventoryMovement[]
+  @@unique([businessId, sku])
+  @@index([businessId, name])
+}
+
+model ProductBarcode {
+  id          String   @id @default(cuid())
+  businessId  String
+  productId   String
+  value       String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  @@unique([businessId, value])
+  @@index([productId])
+}
+
+model InventoryBalance {
+  id         String   @id @default(cuid())
+  branchId   String
+  productId  String
+  quantity   Int      @default(0)
+  updatedAt  DateTime @updatedAt
+  branch     Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  @@unique([branchId, productId])
+}
+
+model InventoryMovement {
+  id         String                 @id @default(cuid())
+  businessId String
+  branchId   String
+  productId  String
+  type       InventoryMovementType
+  quantity   Int
+  reference  String?
+  metadata   Json?
+  createdAt  DateTime               @default(now())
+  branch     Branch                 @relation(fields: [branchId], references: [id])
+  product    Product                @relation(fields: [productId], references: [id])
+  @@index([businessId, createdAt])
+}
+
+model Customer {
+  id         String   @id @default(cuid())
+  businessId String
+  name       String
+  phone      String?
+  email      String?
+  createdAt  DateTime @default(now())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  sales      Sale[]
+  @@index([businessId, phone])
+}
+
+model Supplier {
+  id         String   @id @default(cuid())
+  businessId String
+  name       String
+  phone      String?
+  email      String?
+  createdAt  DateTime @default(now())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  @@index([businessId])
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  businessId    String
+  branchId      String
+  cashierId     String
+  customerId    String?
+  reference     String
+  status        SaleStatus    @default(COMPLETED)
+  subtotalMinor Int
+  discountMinor Int             @default(0)
+  taxMinor      Int             @default(0)
+  totalMinor    Int
+  idempotencyKey String        @unique
+  createdAt     DateTime       @default(now())
+  business      Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  branch        Branch        @relation(fields: [branchId], references: [id])
+  cashier       User          @relation(fields: [cashierId], references: [id])
+  customer      Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items         SaleItem[]
+  payments      Payment[]
+  @@index([businessId, createdAt])
+  @@index([branchId, createdAt])
+}
+
+model SaleItem {
+  id             String  @id @default(cuid())
+  saleId         String
+  productId      String
+  quantity       Int
+  unitPriceMinor Int
+  costMinor      Int
+  sale           Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product        Product @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  saleId      String
+  status      PaymentStatus @default(PENDING)
+  method      String
+  amountMinor Int
+  provider    String?
+  reference   String?       @unique
+  metadata    Json?
+  createdAt   DateTime      @default(now())
+  sale        Sale          @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  @@index([status, createdAt])
+}
+
+model SubscriptionPlan {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  monthlyMinor Int
+  annualMinor  Int
+  features    Json
+  maxBranches Int?
+  active      Boolean        @default(true)
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id         String             @id @default(cuid())
+  businessId String
+  planId     String
+  status     SubscriptionStatus @default(TRIALING)
+  startsAt   DateTime
+  renewsAt   DateTime
+  provider   String?
+  providerRef String?           @unique
+  business   Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  plan       SubscriptionPlan   @relation(fields: [planId], references: [id])
+  @@index([businessId, status])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  businessId String?
+  userId     String?
+  action     String
+  entity     String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: SetNull)
+  user       User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([businessId, createdAt])
+}
