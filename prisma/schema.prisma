@@ -48,6 +48,11 @@ enum InventoryMovementType {
   EXPIRY
 }
 
+enum RegisterShiftStatus {
+  OPEN
+  CLOSED
+}
+
 model User {
   id            String       @id @default(cuid())
   email         String       @unique
@@ -58,6 +63,7 @@ model User {
   memberships   Membership[]
   auditLogs     AuditLog[]
   sales         Sale[]
+  registerShifts RegisterShift[]
 }
 
 model Business {
@@ -78,6 +84,8 @@ model Business {
   sales         Sale[]
   subscriptions Subscription[]
   auditLogs     AuditLog[]
+  cashRegisters CashRegister[]
+  registerShifts RegisterShift[]
 }
 
 model Membership {
@@ -102,7 +110,43 @@ model Branch {
   balances  InventoryBalance[]
   sales     Sale[]
   movements InventoryMovement[]
+  cashRegisters CashRegister[]
+  registerShifts RegisterShift[]
   @@index([businessId])
+}
+
+model CashRegister {
+  id         String   @id @default(cuid())
+  businessId String
+  branchId   String
+  name       String
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  branch     Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  shifts     RegisterShift[]
+  @@unique([branchId, name])
+  @@index([businessId, branchId])
+}
+
+model RegisterShift {
+  id                String              @id @default(cuid())
+  businessId        String
+  branchId          String
+  registerId        String
+  cashierId         String
+  status            RegisterShiftStatus @default(OPEN)
+  openingFloatMinor Int
+  expectedCashMinor Int?
+  closingCashMinor  Int?
+  openedAt          DateTime            @default(now())
+  closedAt          DateTime?
+  business          Business            @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  branch            Branch              @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  register          CashRegister        @relation(fields: [registerId], references: [id], onDelete: Cascade)
+  cashier           User                @relation(fields: [cashierId], references: [id], onDelete: Cascade)
+  @@index([businessId, branchId, status])
+  @@index([cashierId, status])
 }
 
 model Category {

@@ -95,7 +95,7 @@ export default function PointOfSalePage() {
     <main className="pos-shell">
       <header className="pos-topbar">
         <div className="pos-brand-row"><Link href="/" className="brand"><div className="brand-mark"><span></span><span></span><span></span></div><span>market<span className="brand-accent">flow</span></span></Link><span className="pos-divider"></span><span className="pos-title">Point of sale</span></div>
-        <div className="pos-top-actions"><span className="pos-register"><i></i> Main Store · Register 01</span><ThemeToggle/><Link href="/" className="pos-back">Exit POS</Link></div>
+        <div className="pos-top-actions"><span className="pos-register"><i></i> Main Store · Register 01</span><ThemeToggle/><Link href="/register" className="pos-register-link">Register</Link><Link href="/" className="pos-back">Exit POS</Link></div>
       </header>
       <div className="pos-content">
         <section className="pos-catalog panel">

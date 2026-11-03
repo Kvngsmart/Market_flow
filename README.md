@@ -16,6 +16,7 @@ Implemented in this first pass:
 - Inventory management at `/inventory` with catalogue search, barcode counts, low-stock indicators, product creation, stock receiving, manual adjustments, damage/expiry movements, and audit records.
 - Cashier checkout at `/pos` with product search, category browsing, cart quantities, cash totals, receipt confirmation, idempotency keys, atomic stock decrements, inventory movements, and audit records.
 - Sales and receipts at `/sales` with transaction search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore stock and write return movements.
+- Cash-register control at `/register` with open/close shifts, cash expectations, variance calculation, audit records, and manager override rules.
 - `/api/health` service endpoint.
 - Seed data for Sunrise Mart and Starter/Business/Enterprise plan records.
 - Environment template for database, session, and payment-provider credentials.
@@ -41,8 +42,7 @@ Open this folder in VS Code. The included `.vscode/tasks.json` exposes install, 
 
 ## Prioritized next milestones
 
-1. Add cash-register opening/closing and shift reconciliation.
-2. Add product editing, bulk import, and multi-branch stock transfers.
-3. Add payment-provider adapters and webhook verification for Paystack, Flutterwave, and Monnify.
-4. Replace dashboard sample view models with tenant-scoped analytics queries and report exports.
-5. Add subscriptions, platform administration, accounting journals, offline sync, and production test/observability infrastructure.
+1. Add product editing, bulk import, and multi-branch stock transfers.
+2. Add payment-provider adapters and webhook verification for Paystack, Flutterwave, and Monnify.
+3. Replace dashboard sample view models with tenant-scoped analytics queries and report exports.
+4. Add subscriptions, platform administration, accounting journals, offline sync, and production test/observability infrastructure.
