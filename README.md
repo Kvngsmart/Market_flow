@@ -13,6 +13,7 @@ Implemented in this first pass:
 - Tenant-aware PostgreSQL/Prisma schema covering businesses, memberships, branches, products, multi-barcodes, inventory balances/movements, sales, payments, subscriptions, and audit logs.
 - Secure onboarding/login sessions with tenant-aware membership lookups and password hashing.
 - Tenant-scoped product search, barcode lookup, and product creation endpoints.
+- Inventory management at `/inventory` with catalogue search, barcode counts, low-stock indicators, product creation, stock receiving, manual adjustments, damage/expiry movements, and audit records.
 - Cashier checkout at `/pos` with product search, category browsing, cart quantities, cash totals, receipt confirmation, idempotency keys, atomic stock decrements, inventory movements, and audit records.
 - `/api/health` service endpoint.
 - Seed data for Sunrise Mart and Starter/Business/Enterprise plan records.
@@ -39,8 +40,8 @@ Open this folder in VS Code. The included `.vscode/tasks.json` exposes install, 
 
 ## Prioritized next milestones
 
-1. Add inventory receiving/adjustments and a product-management UI linked to the tenant-scoped APIs.
-2. Add receipt history, refunds/returns, cash-register opening/closing, and shift reconciliation.
+1. Add receipt history, refunds/returns, cash-register opening/closing, and shift reconciliation.
+2. Add product editing, bulk import, and multi-branch stock transfers.
 3. Add payment-provider adapters and webhook verification for Paystack, Flutterwave, and Monnify.
 4. Replace dashboard sample view models with tenant-scoped analytics queries and report exports.
 5. Add subscriptions, platform administration, accounting journals, offline sync, and production test/observability infrastructure.
