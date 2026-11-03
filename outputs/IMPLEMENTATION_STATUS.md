@@ -15,6 +15,7 @@
 - Added transactional cash checkout at `/api/sales` with idempotency protection, atomic inventory decrements, sale payments, inventory movements, and audit logging.
 - Added `/inventory` catalogue and stock management UI linked to product, category, and inventory-adjustment APIs.
 - Added receipt, manual-adjustment, damage, and expiry inventory movement handling with negative-stock protection.
+- Added `/sales` receipt history with search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore inventory and record return movements.
 
 ## Verification
 
@@ -23,8 +24,9 @@
 - Unauthenticated requests to `/api/sales` return `401 Authentication required`.
 - The POS preview was opened from a clean production server on `http://localhost:3002/pos`.
 - The inventory preview was opened from a clean production server on `http://localhost:3003/inventory`.
+- The sales/receipts preview was opened from a clean production server on `http://localhost:3004/sales`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Receipt history/refunds, payment-provider webhooks, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones. The dashboard still visualizes foundation view-model data until analytics queries are wired.
+Cash-register shifts, payment-provider webhooks, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones. The dashboard still visualizes foundation view-model data until analytics queries are wired.
