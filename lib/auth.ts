@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 const scrypt = promisify(scryptCallback);
 const SESSION_COOKIE = "marketflow_session";
+export const BRANCH_COOKIE = "marketflow_branch";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 const SESSION_SECRET = process.env.SESSION_SECRET ?? "development-only-change-me";
 

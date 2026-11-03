@@ -2,7 +2,7 @@
 
 MarketFlow is the foundation for a multi-tenant Nigerian retail POS and business-management platform.
 
-## Current milestone: Catalogue operations foundation
+## Current milestone: Multi-branch inventory foundation
 
 Implemented in this first pass:
 
@@ -15,6 +15,7 @@ Implemented in this first pass:
 - The existing merchant dashboard reads authenticated user, business, branch, and role context while preserving its original preview fallback and layout.
 - Tenant-scoped product search, barcode lookup, and product creation endpoints.
 - Inventory management at `/inventory` with catalogue search, barcode counts, low-stock indicators, product creation/editing, CSV import, stock receiving, manual adjustments, damage/expiry movements, and audit records.
+- Multi-branch workspace at `/branches` with branch creation, active-branch selection, branch-level stock summaries, and atomic stock transfers with paired movements and audit records.
 - Cashier checkout at `/pos` with product search, category browsing, cart quantities, cash totals, receipt confirmation, idempotency keys, atomic stock decrements, inventory movements, and audit records.
 - Sales and receipts at `/sales` with transaction search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore stock and write return movements.
 - Cash-register control at `/register` with open/close shifts, cash expectations, variance calculation, audit records, and manager override rules.
@@ -46,7 +47,6 @@ Open this folder in VS Code. The included `.vscode/tasks.json` exposes install, 
 
 ## Prioritized next milestones
 
-1. Add multi-branch stock transfers.
-2. Add hosted payment checkout creation, subscription billing, and provider-specific payment reconciliation.
-3. Add analytics filters, report exports, and threshold alerts.
-4. Add subscriptions management, platform administration, accounting journals, offline sync, and production test/observability infrastructure.
+1. Add hosted payment checkout creation, subscription billing, and provider-specific payment reconciliation.
+2. Add analytics filters, report exports, and threshold alerts.
+3. Add subscriptions management, platform administration, accounting journals, offline sync, and production test/observability infrastructure.

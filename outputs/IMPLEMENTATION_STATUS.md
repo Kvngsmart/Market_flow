@@ -15,6 +15,7 @@
 - Added transactional cash checkout at `/api/sales` with idempotency protection, atomic inventory decrements, sale payments, inventory movements, and audit logging.
 - Added `/inventory` catalogue and stock management UI linked to product, category, and inventory-adjustment APIs.
 - Added tenant-scoped product editing with barcode replacement and audit logging, plus CSV product import with row-level failure reporting and opening-stock receipts.
+- Added `/branches` with active-branch selection, branch creation, branch-level stock summaries, and a transfer drawer; transfers atomically decrement the source, increment the destination, create paired movements, and write an audit record.
 - Added receipt, manual-adjustment, damage, and expiry inventory movement handling with negative-stock protection.
 - Added `/sales` receipt history with search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore inventory and record return movements.
 - Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
@@ -39,8 +40,10 @@
 - The plan chooser and Business-selected onboarding preview were opened from a clean production server on `http://localhost:3009/plans` and `http://localhost:3009/onboarding?plan=Business`.
 - The product editing/import preview was opened from a clean production server on `http://localhost:3011/inventory`; the edit drawer was visually checked without changing the existing layout.
 - Unauthenticated product imports return `401 Authentication required`.
+- The branches and transfer preview was opened from a clean production server on `http://localhost:3012/branches`; both dark and light renders, including the transfer drawer, were visually checked.
+- Unauthenticated branch creation and stock transfer requests return `401 Authentication required`.
 - Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Branch transfers, hosted payment checkout, subscription management, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
+Hosted payment checkout, subscription management, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
