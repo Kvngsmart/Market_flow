@@ -1,4 +1,4 @@
-# MarketFlow POS — Milestone 1 status
+# MarketFlow POS — Milestone 2 status
 
 ## Completed
 
@@ -9,13 +9,44 @@
 - Added PostgreSQL and Redis Docker Compose services.
 - Added VS Code tasks and launch configuration.
 - Added `/api/health` for service-level verification.
+- Added secure onboarding/login sessions and tenant authorization helpers.
+- Added tenant-scoped product and barcode endpoints.
+- Added a cashier POS preview at `/pos` with search, category filters, cart management, cash totals, and receipt confirmation.
+- Added transactional cash checkout at `/api/sales` with idempotency protection, atomic inventory decrements, sale payments, inventory movements, and audit logging.
+- Added `/inventory` catalogue and stock management UI linked to product, category, and inventory-adjustment APIs.
+- Added tenant-scoped product editing with barcode replacement and audit logging, plus CSV product import with row-level failure reporting and opening-stock receipts.
+- Added `/branches` with active-branch selection, branch creation, branch-level stock summaries, and a transfer drawer; transfers atomically decrement the source, increment the destination, create paired movements, and write an audit record.
+- Added receipt, manual-adjustment, damage, and expiry inventory movement handling with negative-stock protection.
+- Added `/sales` receipt history with search/filtering, receipt detail/printing, and owner/manager-controlled refunds that restore inventory and record return movements.
+- Added register/shift models and `/register` controls for opening floats, expected cash, close-time counts, variance calculation, and audit records.
+- Added `/analytics` and `/api/analytics/sales` with tenant-scoped revenue, order, gross-profit, refund, trend, payment-mix, and top-product calculations.
+- Added server-side payment-provider readiness and webhook verification for Paystack, Flutterwave, and Monnify, including amount/currency validation before status updates.
+- Added hosted checkout initialization at `/api/payments/checkout` for configured Paystack, Flutterwave, and Monnify accounts; pending checkout records are settled into completed sales only after a verified webhook, with atomic stock decrement and idempotent retry handling.
+- Added `/plans` pricing preview and plan selection in onboarding; registration now creates a selected-plan 14-day trial subscription.
+- Connected the merchant dashboard labels and navigation to the authenticated tenant context without changing its existing visual layout.
 
 ## Verification
 
-- Source files and project structure were created successfully.
-- Dependency installation could not complete in this managed environment because npm package download stalled after the default cache reported root-owned cache files. Run `npm install` in VS Code or a normal terminal, then use `npm run typecheck` and `npm run build`.
-- Database migration and seed execution require Docker/PostgreSQL and installed Prisma dependencies.
+- `npm run typecheck` passes.
+- `npm run build` passes and includes `/pos` and `/api/sales`.
+- Unauthenticated requests to `/api/sales` return `401 Authentication required`.
+- The POS preview was opened from a clean production server on `http://localhost:3002/pos`.
+- The inventory preview was opened from a clean production server on `http://localhost:3003/inventory`.
+- The sales/receipts preview was opened from a clean production server on `http://localhost:3004/sales`.
+- The cash-register preview was opened from a clean production server on `http://localhost:3005/register`.
+- The analytics preview was opened from a clean production server on `http://localhost:3006/analytics`.
+- The tenant-aware dashboard preview was opened from a clean production server on `http://localhost:3007/`.
+- The payment settings preview was opened from a clean production server on `http://localhost:3008/settings/payments`.
+- Missing-signature Paystack webhooks return `401`; unsupported providers return `404`.
+- The plan chooser and Business-selected onboarding preview were opened from a clean production server on `http://localhost:3009/plans` and `http://localhost:3009/onboarding?plan=Business`.
+- The product editing/import preview was opened from a clean production server on `http://localhost:3011/inventory`; the edit drawer was visually checked without changing the existing layout.
+- Unauthenticated product imports return `401 Authentication required`.
+- The branches and transfer preview was opened from a clean production server on `http://localhost:3012/branches`; both dark and light renders, including the transfer drawer, were visually checked.
+- Unauthenticated branch creation and stock transfer requests return `401 Authentication required`.
+- The POS hosted-payment preview was opened from a clean production server on `http://localhost:3013/pos`; Card/Transfer selection and the provider chooser were visually checked, and the preview catalog correctly blocks live payment.
+- Unauthenticated hosted checkout and missing-signature webhook requests return `401 Authentication required`.
+- Database migration and live checkout execution require Docker/PostgreSQL and an authenticated merchant session.
 
 ## Not yet live
 
-Authentication, tenant-session enforcement, product CRUD, transactional checkout, payment-provider webhooks, accounting journals, offline sync, and super-admin controls are intentionally staged for the next milestones. The dashboard visualizes foundation view-model data and does not claim live payment or accounting results.
+Subscription billing/reconciliation, analytics exports/alerts, accounting journals, offline sync, and super-admin controls remain staged for subsequent milestones.
